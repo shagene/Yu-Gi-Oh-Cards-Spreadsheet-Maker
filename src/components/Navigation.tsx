@@ -256,12 +256,12 @@ function CardNavigationGroup() {
         observer.unobserve(currentRef);
       }
     };
-  }, [onIntersect]);
+  }, [onIntersect, loadingRef, loadMoreCards]);
 
   // Initial load
   useEffect(() => {
     loadMoreCards();
-  }, []); // Only run once on mount
+  }, [loadMoreCards]);
 
   if (error) {
     return (

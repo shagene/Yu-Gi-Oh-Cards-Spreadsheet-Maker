@@ -25,6 +25,8 @@ export function CardGrid({ cards, onCardClick, failedImages, setFailedImages }: 
 
   useEffect(() => {
     console.log('Visible cards updated:', visibleCards.length);
+    if (!loadMoreRef.current || !cards.length) return;
+
     observerRef.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && visibleCards.length < cards.length) {
@@ -35,15 +37,15 @@ export function CardGrid({ cards, onCardClick, failedImages, setFailedImages }: 
           ]);
         }
       },
-      { threshold: 0.1 }
+      {
+        rootMargin: '50px',
+      }
     );
 
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
+    observerRef.current.observe(loadMoreRef.current);
 
     return () => observerRef.current?.disconnect();
-  }, [cards.length, visibleCards.length]);
+  }, [cards, visibleCards.length, batchSize]);
 
   return (
     <>

@@ -12,7 +12,7 @@ import { motion } from 'framer-motion'
 import { create } from 'zustand'
 
 import { Header } from '@/components/Header'
-import { Navigation } from '@/components/Navigation'
+import Navigation from '@/components/Navigation'
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
