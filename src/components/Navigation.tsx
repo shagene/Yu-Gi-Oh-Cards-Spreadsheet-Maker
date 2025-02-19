@@ -358,7 +358,28 @@ function NavigationGroup({
   )
 }
 
-export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
+export const navigation: NavGroup[] = [
+  {
+    title: 'Guides',
+    links: [
+      { title: 'Introduction', href: '/' },
+      { title: 'Quickstart', href: '/quickstart' },
+      { title: 'Card Management', href: '/card-management' },
+      { title: 'Step Organization', href: '/step-organization' },
+      { title: 'Import/Export', href: '/import-export' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { title: 'API Reference', href: '/api' },
+      { title: 'Components', href: '/components' },
+      { title: 'Examples', href: '/examples' },
+    ],
+  },
+]
+
+export default function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
       <ul role="list">
