@@ -49,17 +49,17 @@ export function CardGrid({ cards, onCardClick, failedImages, setFailedImages }: 
 
   return (
     <>
-      <ul role="list" className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 mt-4">
+      <ul role="list" className="grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {visibleCards.map((card) => (
           <li key={card.id} className="relative">
             <div className="group aspect-[2/3] overflow-hidden rounded-lg">
               <Image
                 src={failedImages.has(card.id)
-                  ? 'https://dummyimage.com/96x140/000/fff'
+                  ? 'https://dummyimage.com/144x210/000/fff'
                   : card.image_url}
                 alt={card.name}
-                width={96}
-                height={140}
+                width={144}
+                height={210}
                 className="h-full w-full object-contain object-center"
                 loading="lazy"
                 onError={() => setFailedImages(prev => new Set([...prev, card.id]))}

@@ -59,17 +59,17 @@ export function Step({
         </div>
       </div>
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
         {step.cards.map((card, cardIndex) => (
           <div key={cardIndex} className="group relative">
             <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg">
               <Image
                 src={failedImages.has(card.id)
-                  ? 'https://dummyimage.com/96x140/000/fff'
+                  ? 'https://dummyimage.com/144x210/000/fff'
                   : `/card_images/${card.id}.jpg`}
                 alt={card.name}
-                width={100}
-                height={146}
+                width={144}
+                height={210}
                 className="h-full w-full object-cover object-center transition-transform group-hover:scale-105"
                 onError={() => {
                   setFailedImages(prev => new Set([...prev, card.id]));
