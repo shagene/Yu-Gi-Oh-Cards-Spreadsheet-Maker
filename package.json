@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "check": "npm run type-check && npm run lint && npm run build",
     "migrate": "node scripts/migrateCards.js",
-    "clean": "rm -rf .next"
+    "clean": "rm -rf .next",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
