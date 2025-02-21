@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { SearchBar } from '../components/SearchBar'
 import { CardGrid } from '../components/CardGrid'
-import { Step as StepComponent } from '../components/Step'
 import { Card, Step } from '../types'
 import { Button } from '../components/Button'
 import {
@@ -25,7 +24,6 @@ export default function Home() {
   const [steps, setSteps] = useState<Step[]>([])
   const [selectedStep, setSelectedStep] = useState<number | null>(null)
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
-
   // Search function calling YGOPRODeck API directly
   const searchCards = async (query: string) => {
     if (!query.trim()) {
@@ -33,41 +31,30 @@ export default function Home() {
       setSearchResults([])
       return
     }
-
+  
     setLoading(true)
     try {
-      console.log('Fetching results for:', query)
-      // Search by name first
-      const nameApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(query)}`
-      console.log('Name API URL:', nameApiUrl)
-
-      const nameRes = await fetch(nameApiUrl)
-      console.log('Name search response status:', nameRes.status)
-
+      // Get all cards and filter client-side to match SQL LIKE behavior
+      const apiUrl = 'https://db.ygoprodeck.com/api/v7/cardinfo.php'
+      console.log('API URL:', apiUrl)
+  
+      const response = await fetch(apiUrl)
+      console.log('Search response status:', response.status)
+  
       let allCards = []
-      if (nameRes.ok) {
-        const nameData = await nameRes.json()
-        allCards = nameData.data || []
+      if (response.ok) {
+        const data = await response.json()
+        allCards = data.data || []
       }
-
-      // Only try description search if name search returned no results
-      if (allCards.length === 0) {
-        const descApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?desc=${encodeURIComponent(query)}`
-        console.log('Description API URL:', descApiUrl)
-
-        const descRes = await fetch(descApiUrl)
-        console.log('Description search response status:', descRes.status)
-
-        if (descRes.ok) {
-          const descData = await descRes.json()
-          allCards = [...allCards, ...(descData.data || [])]
-        }
-      }
-
-      // Deduplicate results
+  
+      // Filter results to match SQL LIKE %query% behavior
       const uniqueCards = new Map()
+      const queryLower = query.toLowerCase()
       allCards.forEach((card: any) => {
-        if (!uniqueCards.has(card.id)) {
+        const nameMatch = card.name.toLowerCase().includes(queryLower)
+        const descMatch = card.desc.toLowerCase().includes(queryLower)
+        
+        if ((nameMatch || descMatch) && !uniqueCards.has(card.id)) {
           uniqueCards.set(card.id, {
             id: card.id,
             name: card.name,
@@ -78,7 +65,7 @@ export default function Home() {
           })
         }
       })
-
+  
       const cards = Array.from(uniqueCards.values())
       console.log('Transformed cards:', cards.length)
       setSearchResults(cards)
@@ -89,6 +76,40 @@ export default function Home() {
       setLoading(false)
     }
   }
+  
+  useEffect(() => {
+    console.log('Search query changed:', searchQuery);
+    const timeoutId = setTimeout(() => {
+      if (searchQuery) {
+        console.log('Executing search for:', searchQuery);
+        searchCards(searchQuery);
+      } else {
+        console.log('Clearing search results');
+        setSearchResults([]);
+      }
+    }, 500); // Debounce to reduce API calls
+  
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+  
+  
+  // Increase debounce timeout to reduce API calls
+  useEffect(() => {
+    console.log('Search query changed:', searchQuery);
+  
+    const timeoutId = setTimeout(() => {
+      if (searchQuery) {
+        console.log('Executing search for:', searchQuery);
+        searchCards(searchQuery);
+      } else {
+        console.log('Clearing search results');
+        setSearchResults([]);
+      }
+    }, 500); // Increased from 300ms to 500ms
+  
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+  
   // Increase debounce timeout to reduce API calls
   useEffect(() => {
     console.log('Search query changed:', searchQuery)

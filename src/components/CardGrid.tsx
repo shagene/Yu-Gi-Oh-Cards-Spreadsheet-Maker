@@ -1,9 +1,6 @@
 import Image from 'next/image';
 import { Card } from '../types';
-import { Button } from './Button';
-import { PlusIcon } from '@heroicons/react/20/solid';
 import { useEffect, useRef, useState } from 'react';
-import { clsx } from 'clsx';
 
 interface CardGridProps {
   cards: Card[];

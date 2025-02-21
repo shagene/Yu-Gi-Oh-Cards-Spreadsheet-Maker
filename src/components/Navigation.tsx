@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
@@ -11,8 +11,6 @@ import { Tag } from '@/components/Tag'
 import { remToPx } from '@/lib/remToPx'
 import { Card } from '@/types'
 
-// Remove Supabase initialization and connection test
-const CARDS_PER_PAGE = 200
 
 interface NavGroup {
   title: string
@@ -23,7 +21,7 @@ interface NavGroup {
 }
 
 function useInitialValue<T>(value: T, condition = true) {
-  let initialValue = useRef(value).current
+  const initialValue = useRef(value).current
   return condition ? initialValue : value
 }
 
@@ -88,7 +86,7 @@ function VisibleSectionHighlight({
   group: NavGroup
   pathname: string
 }) {
-  let [sections, visibleSections] = useInitialValue(
+  const [sections, visibleSections] = useInitialValue(
     [
       useSectionStore((s) => s.sections),
       useSectionStore((s) => s.visibleSections),
@@ -96,16 +94,16 @@ function VisibleSectionHighlight({
     typeof window !== 'undefined'
   )
 
-  let isPresent = useIsPresent()
-  let firstVisibleSectionIndex = Math.max(
+  const isPresent = useIsPresent()
+  const firstVisibleSectionIndex = Math.max(
     0,
     [{ id: '_top' }, ...sections].findIndex(
       (section) => section.id === visibleSections[0]
     )
   )
-  let itemHeight = remToPx(2)
-  let height = isPresent ? Math.max(1, visibleSections.length) * itemHeight : itemHeight
-  let top =
+  const itemHeight = remToPx(2)
+  const height = isPresent ? Math.max(1, visibleSections.length) * itemHeight : itemHeight
+  const top =
     isPresent && visibleSections.length > 0
       ? remToPx(2) * firstVisibleSectionIndex
       : 0
@@ -129,10 +127,10 @@ function ActivePageMarker({
   group: NavGroup
   pathname: string
 }) {
-  let itemHeight = remToPx(2)
-  let offset = remToPx(0.25)
-  let activePageIndex = group.links.findIndex((link) => link.href === pathname)
-  let top = offset + activePageIndex * itemHeight
+  const itemHeight = remToPx(2)
+  const offset = remToPx(0.25)
+  const activePageIndex = group.links.findIndex((link) => link.href === pathname)
+  const top = offset + activePageIndex * itemHeight
 
   return (
     <motion.div
@@ -177,8 +175,8 @@ function NavigationGroup({
   group: NavGroup
   className?: string
 }) {
-  let isInsideMobileNavigation = useIsInsideMobileNavigation()
-  let [pathname, setPathname] = useState(usePathname())
+  const isInsideMobileNavigation = useIsInsideMobileNavigation()
+  const [pathname, setPathname] = useState(usePathname())
 
   useEffect(() => {
     if (!isInsideMobileNavigation) {

@@ -3,38 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { Button } from '@/components/Button'
 
-function PageLink({
-  label,
-  page,
-  previous = false,
-}: {
-  label: string
-  page: { href: string; title: string }
-  previous?: boolean
-}) {
-  return (
-    <>
-      <Button
-        href={page.href}
-        aria-label={`${label}: ${page.title}`}
-        variant="secondary"
-        arrow={previous ? 'left' : 'right'}
-      >
-        {label}
-      </Button>
-      <Link
-        href={page.href}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="text-base font-semibold text-zinc-900 transition hover:text-zinc-600 dark:text-white dark:hover:text-zinc-300"
-      >
-        {page.title}
-      </Link>
-    </>
-  )
-}
+
 
 function PageNavigation() {
   const pathname = usePathname()
@@ -42,8 +12,6 @@ function PageNavigation() {
   if (!pathname.startsWith('/cards/')) {
     return null
   }
-
-  // TODO: Replace with static or local data source
   return null
 }
 
@@ -64,6 +32,7 @@ function SmallPrint() {
     </div>
   )
 }
+
 
 export function Footer() {
   return (

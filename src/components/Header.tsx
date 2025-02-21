@@ -9,11 +9,11 @@ export const Header = forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<typeof motion.div>
 >(function Header({ className, ...props }, ref) {
-  let isInsideMobileNavigation = useIsInsideMobileNavigation()
+  const isInsideMobileNavigation = useIsInsideMobileNavigation()
 
-  let { scrollY } = useScroll()
-  let bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9])
-  let bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8])
+  const { scrollY } = useScroll()
+  const bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9])
+  const bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8])
 
   return (
     <motion.div

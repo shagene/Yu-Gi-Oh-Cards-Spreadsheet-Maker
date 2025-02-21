@@ -1,8 +1,5 @@
 'use client'
-
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
 
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
@@ -16,7 +13,7 @@ export function Layout({
   children: React.ReactNode
   allSections: Record<string, Array<Section>>
 }) {
-  let pathname = usePathname()
+  const pathname = usePathname()
 
   return (
     <SectionProvider sections={allSections[pathname] ?? []}>
