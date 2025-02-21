@@ -21,7 +21,7 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange, loading, className = '' }: SearchBarProps) {
   return (
-    <div className={`mx-auto mt-10 flex max-w-2xl gap-x-4 ${className}`}>
+    <div className={`mx-auto mt-10 flex max-w-4xl gap-x-4 ${className}`}>
       <div className="group relative flex h-12 w-full">
         <SearchIcon className="pointer-events-none absolute top-0 left-3 h-full w-5 stroke-zinc-500" />
         <input
