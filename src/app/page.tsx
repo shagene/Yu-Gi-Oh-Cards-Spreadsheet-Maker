@@ -36,36 +36,50 @@ export default function Home() {
     setLoading(true)
     try {
       console.log('Fetching results for:', query)
-      const apiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(query)}`
-      console.log('API URL:', apiUrl)
+      // Search by name first
+      const nameApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(query)}`
+      console.log('Name API URL:', nameApiUrl)
 
-      const res = await fetch(apiUrl)
-      console.log('Response status:', res.status)
+      const nameRes = await fetch(nameApiUrl)
+      console.log('Name search response status:', nameRes.status)
 
-      if (!res.ok) {
-        console.error('Search failed:', res.status, res.statusText)
+      if (!nameRes.ok) {
+        console.error('Name search failed:', nameRes.status, nameRes.statusText)
         throw new Error('Search failed')
       }
 
-      const data = await res.json()
-      console.log('Raw API response:', data)
+      const nameData = await nameRes.json()
+      
+      // Search by description
+      const descApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?desc=${encodeURIComponent(query)}`
+      console.log('Description API URL:', descApiUrl)
 
-      if (!data.data) {
-        console.log('No results found')
-        setSearchResults([])
-        return
+      const descRes = await fetch(descApiUrl)
+      console.log('Description search response status:', descRes.status)
+
+      let descData = { data: [] }
+      if (descRes.ok) {
+        descData = await descRes.json()
       }
 
-      // Transform the YGOPRODeck response to match our Card type
-      const cards: Card[] = data.data.map((card: any) => ({
-        id: card.id,
-        name: card.name,
-        type: card.type,
-        description: card.desc,
-        card_data: JSON.stringify(card),
-        image_url: card.card_images?.[0]?.image_url ?? '',
-      }))
+      // Combine and deduplicate results
+      const allCards = [...(nameData.data || []), ...(descData.data || [])]
+      const uniqueCards = new Map()
+      
+      allCards.forEach((card: any) => {
+        if (!uniqueCards.has(card.id)) {
+          uniqueCards.set(card.id, {
+            id: card.id,
+            name: card.name,
+            type: card.type,
+            description: card.desc,
+            card_data: JSON.stringify(card),
+            image_url: card.card_images?.[0]?.image_url ?? '',
+          })
+        }
+      })
 
+      const cards = Array.from(uniqueCards.values())
       console.log('Transformed cards:', cards.length)
       setSearchResults(cards)
     } catch (error) {
