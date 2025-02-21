@@ -13,6 +13,7 @@ import {
   ArrowUpOnSquareIcon,
 } from '@heroicons/react/20/solid'
 import { StepsList } from '../components/StepsList'
+import { handlePrint } from '../utils/printUtils'
 
 export default function Home() {
   // Search state
@@ -249,22 +250,22 @@ export default function Home() {
       reader.readAsText(file)
     }
   }
-
+  // Update the printSteps function
   const printSteps = () => {
-    window.print()
+    handlePrint()
   }
-
   return (
     <div className="flex min-h-full flex-col gap-8">
       <SearchBar
+        className="search-bar"
         value={searchQuery}
         onChange={(e) => {
           console.log('Search input changed:', e.target.value)
           setSearchQuery(e.target.value)
         }}
-        loading={loading} 
+        loading={loading}
       />
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-4 control-buttons">
         <Button
           variant="primary"
           onClick={exportSteps}
@@ -297,7 +298,7 @@ export default function Home() {
           Print Steps
         </Button>
       </div>
-      <div className="max-h-[600px] overflow-y-auto">
+      <div className="max-h-[600px] overflow-y-auto card-pool">
         <CardGrid
           cards={searchResults}
           onCardClick={addCardToStep}
@@ -306,6 +307,7 @@ export default function Home() {
         />
       </div>
       <StepsList
+        className="steps-list"
         steps={steps}
         selectedStep={selectedStep}
         onSelect={setSelectedStep}
@@ -324,7 +326,7 @@ export default function Home() {
         failedImages={failedImages}
         setFailedImages={setFailedImages}
       />
-      <div className="flex justify-center pb-8">
+      <div className="flex justify-center pb-8 add-step-button">
         <Button
           variant="primary"
           onClick={createStep}

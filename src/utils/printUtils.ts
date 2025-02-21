@@ -1,33 +1,28 @@
 import { Step } from '../types'
 
 export const handlePrint = () => {
-  // Add print-specific styles
   const style = document.createElement('style')
   style.id = 'print-styles'
   style.innerHTML = `
     @media print {
-      /* Hide search bar and controls */
+      /* Hide non-essential elements */
       .search-bar,
       .control-buttons,
-      .card-pool {
+      .card-pool,
+      .add-step-button {
         display: none !important;
       }
 
-      /* Ensure steps are visible */
+      /* Adjust layout for printing */
       .steps-list {
-        display: block !important;
-        page-break-inside: avoid;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
-      /* Adjust step layout for printing */
+      /* Ensure each step starts on a new page */
       .step {
         page-break-inside: avoid;
-        margin-bottom: 20px;
-      }
-
-      /* Remove any fixed positioning */
-      .sticky {
-        position: static !important;
+        margin-bottom: 2rem;
       }
     }
   `
@@ -36,11 +31,8 @@ export const handlePrint = () => {
   // Trigger print
   window.print()
 
-  // Clean up print styles after printing
+  // Cleanup
   window.addEventListener('afterprint', () => {
-    const printStyle = document.getElementById('print-styles')
-    if (printStyle) {
-      printStyle.remove()
-    }
+    document.getElementById('print-styles')?.remove()
   })
 }
