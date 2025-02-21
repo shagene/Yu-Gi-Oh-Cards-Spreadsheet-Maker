@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import clsx from 'clsx'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
-import { useMobileNavigationStore } from '@/components/MobileNavigation'
 import { Logo } from './Logo'
 
 export const Header = forwardRef<

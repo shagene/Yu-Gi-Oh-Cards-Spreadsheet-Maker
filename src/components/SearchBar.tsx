@@ -15,9 +15,10 @@ function SearchIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 interface SearchBarProps {
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  loading?: boolean;
 }
 
-export function SearchBar({ value, onChange }: SearchBarProps) {
+export function SearchBar({ value, onChange, loading }: SearchBarProps) {
   return (
     <div className="mx-auto mt-10 flex max-w-2xl gap-x-4">
       <div className="group relative flex h-12 w-full">
@@ -30,6 +31,11 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           onChange={onChange}
           className="flex-auto appearance-none bg-transparent pl-10 text-zinc-900 outline-none border border-zinc-700/50 rounded-md focus:border-blue-500 placeholder:text-zinc-500 focus:w-full focus:flex-none sm:text-sm dark:text-white [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
         />
+        {loading && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-700/50 border-t-blue-500 dark:border-zinc-500/50 dark:border-t-blue-400"></div>
+          </div>
+        )}
       </div>
     </div>
   );

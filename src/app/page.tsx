@@ -43,29 +43,28 @@ export default function Home() {
       const nameRes = await fetch(nameApiUrl)
       console.log('Name search response status:', nameRes.status)
 
-      if (!nameRes.ok) {
-        console.error('Name search failed:', nameRes.status, nameRes.statusText)
-        throw new Error('Search failed')
+      let allCards = []
+      if (nameRes.ok) {
+        const nameData = await nameRes.json()
+        allCards = nameData.data || []
       }
 
-      const nameData = await nameRes.json()
-      
-      // Search by description
-      const descApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?desc=${encodeURIComponent(query)}`
-      console.log('Description API URL:', descApiUrl)
+      // Only try description search if name search returned no results
+      if (allCards.length === 0) {
+        const descApiUrl = `https://db.ygoprodeck.com/api/v7/cardinfo.php?desc=${encodeURIComponent(query)}`
+        console.log('Description API URL:', descApiUrl)
 
-      const descRes = await fetch(descApiUrl)
-      console.log('Description search response status:', descRes.status)
+        const descRes = await fetch(descApiUrl)
+        console.log('Description search response status:', descRes.status)
 
-      let descData = { data: [] }
-      if (descRes.ok) {
-        descData = await descRes.json()
+        if (descRes.ok) {
+          const descData = await descRes.json()
+          allCards = [...allCards, ...(descData.data || [])]
+        }
       }
 
-      // Combine and deduplicate results
-      const allCards = [...(nameData.data || []), ...(descData.data || [])]
+      // Deduplicate results
       const uniqueCards = new Map()
-      
       allCards.forEach((card: any) => {
         if (!uniqueCards.has(card.id)) {
           uniqueCards.set(card.id, {
@@ -89,11 +88,10 @@ export default function Home() {
       setLoading(false)
     }
   }
-
-  // Handle search input changes
+  // Increase debounce timeout to reduce API calls
   useEffect(() => {
     console.log('Search query changed:', searchQuery)
-
+  
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
         console.log('Executing search for:', searchQuery)
@@ -102,11 +100,10 @@ export default function Home() {
         console.log('Clearing search results')
         setSearchResults([])
       }
-    }, 300)
-
+    }, 500) // Increased from 300ms to 500ms
+  
     return () => clearTimeout(timeoutId)
   }, [searchQuery])
-
   // Step functions
   const createStep = () => {
     setSteps((prev) => [...prev, { note: '', cards: [] }])
@@ -265,6 +262,7 @@ export default function Home() {
           console.log('Search input changed:', e.target.value)
           setSearchQuery(e.target.value)
         }}
+        loading={loading} 
       />
       <div className="flex justify-center gap-4">
         <Button
@@ -326,7 +324,7 @@ export default function Home() {
         failedImages={failedImages}
         setFailedImages={setFailedImages}
       />
-      <div className="flex justify-center">
+      <div className="flex justify-center pb-8">
         <Button
           variant="primary"
           onClick={createStep}

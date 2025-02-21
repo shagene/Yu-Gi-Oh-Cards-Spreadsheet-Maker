@@ -65,14 +65,25 @@ export function Step({
             <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg">
               <Image
                 src={failedImages.has(card.id)
-                  ? 'https://dummyimage.com/144x210/000/fff'
+                  ? 'https://dummyimage.com/96x140/000/fff'
                   : `/card_images/${card.id}.jpg`}
                 alt={card.name}
-                width={144}
-                height={210}
+                width={100}
+                height={146}
                 className="h-full w-full object-cover object-center transition-transform group-hover:scale-105"
                 onError={() => {
-                  setFailedImages(prev => new Set([...prev, card.id]));
+                  // If local image fails, try YGOPRODeck as fallback
+                  const img = document.createElement('img');
+                  img.src = `https://images.ygoprodeck.com/images/cards/${card.id}.jpg`;
+                  img.onload = () => {
+                    const imgElement = document.querySelector(`img[alt="${card.name}"]`) as HTMLImageElement;
+                    if (imgElement) {
+                      imgElement.src = img.src;
+                    }
+                  };
+                  img.onerror = () => {
+                    setFailedImages(prev => new Set([...prev, card.id]));
+                  };
                 }}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-end bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">

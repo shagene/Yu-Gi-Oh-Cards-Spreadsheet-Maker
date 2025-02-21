@@ -5,38 +5,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion'
-import { createClient } from '@supabase/supabase-js'
-
-import { Button } from '@/components/Button'
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
 import { useSectionStore } from '@/components/SectionProvider'
 import { Tag } from '@/components/Tag'
 import { remToPx } from '@/lib/remToPx'
 import { Card } from '@/types'
 
-// Test Supabase connection
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
-// Immediately test the connection
-console.log('Testing Supabase connection...');
-Promise.resolve(
-  supabase
-    .from('cards')
-    .select('count', { count: 'exact' })
-).then(({ count, error }) => {
-    if (error) {
-      console.error('Supabase connection test failed:', error);
-    } else {
-      console.log('Supabase connection successful, total cards:', count);
-    }
-  })
-  .catch(err => {
-    console.error('Supabase connection test error:', err);
-  });
-
+// Remove Supabase initialization and connection test
 const CARDS_PER_PAGE = 200
 
 interface NavGroup {
@@ -175,131 +150,21 @@ function CardNavigationGroup() {
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
   const loadingRef = useRef<HTMLDivElement>(null);
-  const seenIds = useRef(new Set<string>());
-
-  const loadMoreCards = useCallback(async () => {
-    if (!hasMore || loading) return;
-
-    setLoading(true);
-    try {
-      const from = page * CARDS_PER_PAGE;
-      const to = from + CARDS_PER_PAGE - 1;
-
-      const { data, error } = await supabase
-        .from('cards')
-        .select('*')
-        .order('name')
-        .range(from, to);
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        setHasMore(false);
-        return;
-      }
-
-      // Filter out duplicates and map to typed cards
-      const newCards = data.reduce<Card[]>((acc, card) => {
-        if (!seenIds.current.has(card.id.toString())) {
-          seenIds.current.add(card.id.toString());
-          acc.push({
-            id: card.id,
-            name: card.name,
-            type: card.type || '',
-            description: card.description || '',
-            card_data: card.card_data || {},
-            image_url: card.image_url || ''
-          });
-        }
-        return acc;
-      }, []);
-
-      if (newCards.length === 0) {
-        // If all cards were duplicates, try loading the next page
-        setPage(prev => prev + 1);
-        return;
-      }
-
-      setCards(prev => [...prev, ...newCards]);
-      setHasMore(data.length === CARDS_PER_PAGE);
-      setPage(prev => prev + 1);
-    } catch (err) {
-      console.error('Error loading cards:', err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-    } finally {
-      setLoading(false);
-    }
-  }, [page, hasMore, loading]);
-
-  // Handle intersection observer
-  const onIntersect = useCallback((entries: IntersectionObserverEntry[]) => {
-    const [entry] = entries;
-    if (entry.isIntersecting && hasMore && !loading) {
-      loadMoreCards();
-    }
-  }, [hasMore, loading, loadMoreCards]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(onIntersect, { rootMargin: '100px' });
-    const currentRef = loadingRef.current;
-
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [onIntersect, loadingRef, loadMoreCards]);
-
-  // Initial load
-  useEffect(() => {
-    loadMoreCards();
-  }, [loadMoreCards]);
-
-  if (error) {
-    return (
-      <div className="text-sm text-red-600 dark:text-red-400 p-4">
-        Error loading cards: {error}
-      </div>
-    );
-  }
 
   const group: NavGroup = {
-    title: `Cards (${cards.length}${hasMore ? '+' : ''})`,
-    links: cards.map(card => ({
-      title: card.name,
-      href: `/cards/${card.id}`
-    }))
+    title: 'Cards',
+    links: []
   };
 
   return (
     <div className="flex flex-col min-h-0 overflow-auto">
-      {cards.length > 0 && (
-        <>
-          <NavigationGroup group={group} />
-          <div className="text-xs text-zinc-600 dark:text-zinc-400 px-4 py-1">
-            Loaded {cards.length} of 13,566 cards
-          </div>
-        </>
-      )}
+      <NavigationGroup group={group} />
       <div
         ref={loadingRef}
         className="py-2 text-center text-sm text-zinc-600 dark:text-zinc-400"
       >
-        {loading ? (
-          'Loading more cards...'
-        ) : hasMore ? (
-          'Scroll for more cards'
-        ) : (
-          `Loaded all ${cards.length} cards`
-        )}
+        Using YGOPRODeck API
       </div>
     </div>
   );

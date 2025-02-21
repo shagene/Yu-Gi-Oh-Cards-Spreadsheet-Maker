@@ -13,9 +13,11 @@ interface StepsListProps {
   onDelete: (index: number) => void
   failedImages: Set<number>
   setFailedImages: (callback: (prev: Set<number>) => Set<number>) => void
+  className?: string;
 }
 
-export function StepsList({
+export const StepsList: React.FC<StepsListProps> = ({
+  className,
   steps,
   selectedStep,
   onSelect,
@@ -27,7 +29,7 @@ export function StepsList({
   onDelete,
   failedImages,
   setFailedImages,
-}: StepsListProps) {
+}: StepsListProps) =>{
   if (steps.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center py-12">
@@ -39,32 +41,34 @@ export function StepsList({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-      {steps.map((step, index) => (
-        <div
-          key={index}
-          className={`${
-            steps.length % 2 !== 0 && index === steps.length - 1
-              ? 'sm:col-span-2'
-              : ''
-          }`}
-        >
-          <StepComponent
-            step={step}
-            index={index}
-            isSelected={selectedStep === index}
-            onSelect={() => onSelect(index)}
-            onNoteChange={(note) => onNoteChange(index, note)}
-            onMoveCard={(cardIndex, direction) => onMoveCard(index, cardIndex, direction)}
-            onDeleteCard={(cardIndex) => onDeleteCard(index, cardIndex)}
-            onMoveStep={(direction) => onMoveStep(index, direction)}
-            onDuplicate={() => onDuplicate(index)}
-            onDelete={() => onDelete(index)}
-            failedImages={failedImages}
-            setFailedImages={setFailedImages}
-          />
-        </div>
-      ))}
+    <div className={`space-y-4 ${className || ''}`}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        {steps.map((step, index) => (
+          <div
+            key={index}
+            className={`${
+              steps.length % 2 !== 0 && index === steps.length - 1
+                ? 'sm:col-span-2'
+                : ''
+            }`}
+          >
+            <StepComponent
+              step={step}
+              index={index}
+              isSelected={selectedStep === index}
+              onSelect={() => onSelect(index)}
+              onNoteChange={(note) => onNoteChange(index, note)}
+              onMoveCard={(cardIndex, direction) => onMoveCard(index, cardIndex, direction)}
+              onDeleteCard={(cardIndex) => onDeleteCard(index, cardIndex)}
+              onMoveStep={(direction) => onMoveStep(index, direction)}
+              onDuplicate={() => onDuplicate(index)}
+              onDelete={() => onDelete(index)}
+              failedImages={failedImages}
+              setFailedImages={setFailedImages}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
