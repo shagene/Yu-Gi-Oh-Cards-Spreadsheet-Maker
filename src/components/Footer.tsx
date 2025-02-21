@@ -2,20 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
 
 import { Button } from '@/components/Button'
-
-interface FooterCard {
-  id: string;
-  name: string;
-}
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 function PageLink({
   label,
@@ -50,59 +38,13 @@ function PageLink({
 
 function PageNavigation() {
   const pathname = usePathname()
-  const [cards, setCards] = useState<FooterCard[]>([])
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchCards() {
-      const { data } = await supabase
-        .from('cards')
-        .select('id, name')
-        .order('name')
-      
-      setCards(data || [])
-      setLoading(false)
-    }
-
-    fetchCards()
-  }, [])
-
-  if (loading || !pathname.startsWith('/cards/')) {
+  if (!pathname.startsWith('/cards/')) {
     return null
   }
 
-  const allPages = cards.map(card => ({
-    href: `/cards/${card.id}`,
-    title: card.name
-  }))
-
-  const currentPageIndex = allPages.findIndex((page) => page.href === pathname)
-
-  if (currentPageIndex === -1) {
-    return null
-  }
-
-  const previousPage = allPages[currentPageIndex - 1]
-  const nextPage = allPages[currentPageIndex + 1]
-
-  if (!previousPage && !nextPage) {
-    return null
-  }
-
-  return (
-    <div className="flex">
-      {previousPage && (
-        <div className="flex flex-col items-start gap-3">
-          <PageLink label="Previous" page={previousPage} previous />
-        </div>
-      )}
-      {nextPage && (
-        <div className="ml-auto flex flex-col items-end gap-3">
-          <PageLink label="Next" page={nextPage} />
-        </div>
-      )}
-    </div>
-  )
+  // TODO: Replace with static or local data source
+  return null
 }
 
 function SmallPrint() {
