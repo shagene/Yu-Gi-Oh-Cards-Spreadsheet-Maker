@@ -286,6 +286,14 @@ export default function Home() {
         }}
         loading={loading}
       />
+      <div className="max-h-[600px] overflow-y-auto card-pool">
+        <CardGrid
+          cards={searchResults}
+          onCardClick={addCardToStep}
+          failedImages={failedImages}
+          setFailedImages={setFailedImages}
+        />
+      </div>
       <div className="flex justify-center gap-4 control-buttons">
         <Button
           variant="primary"
@@ -318,14 +326,6 @@ export default function Home() {
           <PrinterIcon className="h-5 w-5" />
           Print Steps
         </Button>
-      </div>
-      <div className="max-h-[600px] overflow-y-auto card-pool">
-        <CardGrid
-          cards={searchResults}
-          onCardClick={addCardToStep}
-          failedImages={failedImages}
-          setFailedImages={setFailedImages}
-        />
       </div>
       <StepsList
         className="steps-list"
