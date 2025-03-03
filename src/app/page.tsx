@@ -13,13 +13,13 @@ import {
 } from '@heroicons/react/20/solid'
 import { StepsList } from '../components/StepsList'
 import { handlePrint } from '../utils/printUtils'
+import { ControlButtons } from '../components/ControlButtons'
 
 export default function Home() {
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<Card[]>([])
   const [loading, setLoading] = useState(false)
-
   // Steps management
   const [steps, setSteps] = useState<Step[]>([])
   const [selectedStep, setSelectedStep] = useState<number | null>(null)
@@ -294,39 +294,12 @@ export default function Home() {
           setFailedImages={setFailedImages}
         />
       </div>
-      <div className="flex justify-center gap-4 control-buttons">
-        <Button
-          variant="primary"
-          onClick={exportSteps}
-          className="inline-flex items-center gap-2"
-        >
-          <DocumentArrowDownIcon className="h-5 w-5" />
-          Export
-        </Button>
-        <label className="cursor-pointer">
-          <div
-            role="button"
-            className="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-sm ring-gray-300 ring-inset hover:bg-gray-50"
-          >
-            <ArrowUpOnSquareIcon className="h-5 w-5" />
-            Import
-          </div>
-          <input
-            type="file"
-            className="hidden"
-            accept=".json"
-            onChange={importSteps}
-          />
-        </label>
-        <Button
-          variant="primary"
-          onClick={printSteps}
-          className="inline-flex items-center gap-2"
-        >
-          <PrinterIcon className="h-5 w-5" />
-          Print Steps
-        </Button>
-      </div>
+      <ControlButtons
+        steps={steps}
+        exportSteps={exportSteps}
+        importSteps={importSteps}
+        printSteps={printSteps}
+      />
       <StepsList
         className="steps-list"
         steps={steps}
